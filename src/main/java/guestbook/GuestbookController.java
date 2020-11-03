@@ -19,6 +19,9 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.util.Streamable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +30,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.Assert;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
@@ -42,7 +41,7 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @Controller
 class GuestbookController {
-
+	Logger logger = LoggerFactory.getLogger(GuestbookController.class);
 	// A special header sent with each AJAX request
 	private static final String IS_AJAX_HEADER = "X-Requested-With=XMLHttpRequest";
 
@@ -54,7 +53,7 @@ class GuestbookController {
 	 *
 	 * @param guestbook must not be {@literal null}
 	 */
-	public GuestbookController(GuestbookRepository guestbook) {
+	public  GuestbookController(GuestbookRepository guestbook) {
 
 		Assert.notNull(guestbook, "Guestbook must not be null!");
 		this.guestbook = guestbook;
@@ -151,6 +150,18 @@ class GuestbookController {
 
 		}).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 	}
+/*	@PutMapping(path = "/guestbook")
+	String updateEntry(
+		 @ModelAttribute("G") GuestbookForm form, Errors errors, Model model) {
+
+			if (errors.hasErrors()) {
+				return guestBook(model, form);
+			}
+
+
+			return "redirect:/guestbook";
+
+	}*/
 
 	/**
 	 * Handles AJAX requests to delete {@link GuestbookEntry}s. Otherwise, this method is similar
@@ -170,4 +181,45 @@ class GuestbookController {
 
 		}).orElseGet(() -> ResponseEntity.notFound().build());
 	}
-}
+	@GetMapping("/test")
+	public String showTest(){
+		return"idSelector";
+	}
+
+	@GetMapping("/test-http-path")
+	public String showHoeTest(Model model){
+		Integer x= 3;
+		model.addAttribute("xyz",x);
+		Student mike= new Student("mike");
+		model.addAttribute("mikestudent",mike);
+		return "hoetestPage";
+	}
+	// Getmethod
+	@GetMapping("/pathrequestxyz")
+	public String showTestSeite(){
+		return "testSeite";
+	}
+	@GetMapping("/guestbook/update")
+	public String showFormForUpdate(@RequestParam("id") long id,
+									Model theModel) {
+
+		GuestbookEntry guestbook1= guestbook.getById(id);
+
+		theModel.addAttribute("entry", guestbook1);
+
+		// send over to our form
+		return "update-form";
+	}
+	@PostMapping("/guestbook/{entry}")
+	public String addLike(@PathVariable Optional<GuestbookEntry> entry) {
+
+		return entry.map(it -> {
+			it.addLike();
+
+			guestbook.save(it);
+			return "redirect:/guestbook";
+
+		}).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+	}
+	}
+

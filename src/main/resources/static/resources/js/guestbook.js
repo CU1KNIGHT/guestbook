@@ -60,4 +60,18 @@ $(document).ready(function() {
 			}
 		});
 	});
+	$('.card').on('click',function() {
+		// $("body").css("background-color","red");
+
+		var element_id = $(this).attr('id');
+		// console.log(element_id);
+
+	});
+	$('.like-button').on('click', function (e) {
+
+		$(this).find(".like-unclicked").toggle();
+		$(this).find(".like-clicked").toggle();
+
+
+	});
 });

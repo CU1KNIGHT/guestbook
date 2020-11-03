@@ -36,6 +36,8 @@ class GuestbookEntry {
 	private @Id @GeneratedValue Long id;
 	private final String name, text;
 	private final LocalDateTime date;
+	private Integer likes=0;
+	private String email;
 
 	/**
 	 * Creates a new {@link GuestbookEntry} for the given name and text.
@@ -43,7 +45,7 @@ class GuestbookEntry {
 	 * @param name must not be {@literal null} or empty
 	 * @param text must not be {@literal null} or empty
 	 */
-	public GuestbookEntry(String name, String text) {
+	public GuestbookEntry(String name, String text,String email) {
 
 		Assert.hasText(name, "Name must not be null or empty!");
 		Assert.hasText(text, "Text must not be null or empty!");
@@ -51,6 +53,10 @@ class GuestbookEntry {
 		this.name = name;
 		this.text = text;
 		this.date = LocalDateTime.now();
+		this.likes=5;
+		this.email=email;
+
+
 	}
 
 	@SuppressWarnings("unused")
@@ -58,8 +64,19 @@ class GuestbookEntry {
 		this.name = null;
 		this.text = null;
 		this.date = null;
+		this.likes=null;
+		this.email=null;
 	}
 
+
+
+	public void addLike () {
+		this.likes = likes +1;
+	}
+
+	public int getLikes () {
+		return likes;
+	}
 	public String getName() {
 		return name;
 	}
@@ -74,5 +91,13 @@ class GuestbookEntry {
 
 	public String getText() {
 		return text;
+	}
+
+	public String getEmail () {
+		return email;
+	}
+
+	public void setEmail (String email) {
+		this.email = email;
 	}
 }
